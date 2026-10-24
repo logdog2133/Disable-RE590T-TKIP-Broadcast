@@ -1,0 +1,14 @@
+# User configuration backups and generated candidates can contain Wi-Fi/admin credentials.
+*.bin
+*.elf
+*.zip
+*.pcap
+*.pcapng
+*.cap
+*.log
+analysis/*.elf
+backups/
+captures/
+firmware/
+
+

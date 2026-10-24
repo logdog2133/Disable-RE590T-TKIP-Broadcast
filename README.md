@@ -8,28 +8,25 @@ keeping its extender function online.
 
 The stock UI offered WPA2-PSK but no cipher selector. Fresh beacon scans showed
 that the extender advertised TKIP as its group cipher and as a pairwise option
-alongside CCMP/AES on both bands. Windows client links negotiated CCMP, but that
-alone did not establish that the beacons were AES-only.
+alongside CCMP/AES on both bands. Windows client links negotiated CCMP, but I couldn't 
+establish that the beacons were AES-only.
 
-Offline analysis found that the firmware's Auto cipher value maps to mixed
+Offline analysis found that the firmware's _Auto_ cipher value maps to mixed
 TKIP/AES mode. A locally prepared configuration candidate changed four cipher
-fields (2.4 and 5 GHz station/backhaul and AP fields) from Auto to AES and
-preserved the other decoded settings. The first restore attempt did not persist;
+fields (2.4 and 5 GHz station/backhaul and AP fields) from _Auto_ to _AES_ while
+preserving the other decoded settings. The first restore attempt did not persist;
 the same candidate was selected and restored again. After the extender rebooted,
 fresh scans showed CCMP/AES only in both bands' group and pairwise cipher lists.
 
-The user then reported that the phone's “Weak Security” warning was gone and
-that Internet access worked through the extender. The user later switched to
-copying the host SSID and reported that it still works. See
-[`docs/VERIFICATION.md`](docs/VERIFICATION.md) for the exact evidence and the
-remaining limit on the latest same-name scan.
+Updates to these fields remediated the iOS "Weak security" warning on the extended
+network.
 
 ## Start here
 
 - [`docs/PROCESS.md`](docs/PROCESS.md) — the investigation and successful
   end-to-end steps, including the failed first restore.
 - [`docs/FIRMWARE-ANALYSIS.md`](docs/FIRMWARE-ANALYSIS.md) — how the stock
-  firmware turns Auto into mixed TKIP/AES and which configuration fields were
+  firmware turns _Auto_ into mixed TKIP/AES and which configuration fields were
   changed.
 - [`docs/VERIFICATION.md`](docs/VERIFICATION.md) — sanitized beacon and client
   evidence, with limitations.
@@ -41,8 +38,12 @@ remaining limit on the latest same-name scan.
 
 ## Use the local tools carefully
 
+**THE TOOLS IN THIS REPOSITORY ARE INTENDED ONLY FOR USE ON NETWORKS THAT YOU
+ARE AUTHORIZED TO TEST ON. UNDER NO MEANS SHOULD THEY BE USED ON A NETWORK WITHOUT
+EXPLICIT PERMISSION FROM THE OWNER**
+
 The Wi-Fi scan helper prints the SSID and BSSID it inspects. Supply the target
-SSID locally and redact names and hardware addresses before sharing output:
+SSID locally:
 
 ```powershell
 .\scripts\Get-Re590tAdvertisedSecurity.ps1 `
@@ -66,11 +67,9 @@ firmware, backup, capture, and log files; inspect `git status` before committing
 
 This resolves the observed TKIP broadcast behavior for the tested unit; it does
 not make the old firmware broadly secure. The extender remains on the 2017
-end-of-support build. No firmware image was flashed, and the newer UN-labeled
-image was not applied to the US unit because region compatibility was not
-established. Do not restore another unit's candidate or cross-flash firmware.
+end-of-support build. No firmware image was flashed. Do not restore another unit's 
+candidate or cross-flash firmware.
 
 The successful configuration candidate is intentionally not included. Do not
 publish device backups, candidates, raw scans, serial numbers, BSSIDs, SSIDs,
 private IP addresses, or passwords.
-
